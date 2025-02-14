@@ -2,40 +2,18 @@
 title: "Project_mini_GZL"
 author: "Gabriela Cromhout"
 date: "2025-02-13"
-output: powerpoint_presentation
+output:
+  slidy_presentation: default
+  powerpoint_presentation: default
+  beamer_presentation: default
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
-## R Markdown
 
-This is an R Markdown presentation. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document.
-
-## Slide with Bullets
-
-- Bullet 1
-- Bullet 2
-- Bullet 3
-
-## Slide with R Output
-
-```{r cars, echo = TRUE}
-summary(cars)
-```
-
-## Slide with Plot
-
-```{r pressure}
-plot(pressure)
-```
-
-```{r, eval=FALSE}
-getwd()
-```
 
 ```{r}
 library(tidyverse)
@@ -47,6 +25,17 @@ maternal_data <- read.table(file = 'Maternal Health Risk Data Set.csv', header =
 ```{r}
 head(maternal_data)
 ```
+```{r}
+maternal_data %>% 
+  group_by(RiskLevel) %>%
+  summarise(avg = mean(Age))%>%
+  arrange(desc(avg))
+
+```
+
+
+
+
 #Q1ii
 ```{r}
 table_dias <- select(maternal_data, RiskLevel, DiastolicBP)
@@ -54,34 +43,32 @@ table_dias <- select(maternal_data, RiskLevel, DiastolicBP)
 ```{r}
 dias_table <- select(maternal_data, RiskLevel, DiastolicBP)
 ```
+
 ```{r}
-dias_table
-```
-```{r}
-dias_table %>% group_by(RiskLevel) %>%summarise(avg=median(DiastolicBP)) %>% arrange(avg)
+dias_table %>% group_by(RiskLevel) %>%summarise(avg=median(DiastolicBP)) %>%   arrange(desc(avg))
 ```
 #Q2 New variable - systolic rate
 ```{r}
 maternal_data_1 <- mutate(maternal_data, systolic_rate = SystolicBP/Age)
+head(maternal_data_1)
 ```
-```{r}
-maternal_data_1
-```
+
 #Q3 - filter for <40
-```{r}
-filter(maternal_data_1, Age<=40)
-```
+
 #filter then SBP by risk level
 
 ```{r}
-filter(maternal_data_1, Age<=40) %>% group_by(RiskLevel) %>% summarise(avg=mean(SystolicBP)) %>% arrange(avg)
+filter(maternal_data_1, Age<=40) %>% group_by(RiskLevel) %>% summarise(avg=mean(SystolicBP)) %>% arrange(desc(avg))
 ```
-```{r}
-head(maternal_data)
-```
+
 #Q4 - histo & boxplot Age
 ```{r}
-hist(maternal_data$Age)
+hist(maternal_data$Age, 
+     col = "lightblue",  # Fill color of bars
+     border = "black",   # Border color of bars
+     main = "Age Distribution",
+     xlab = "Age",
+     ylab = "Frequency")
 ```
 #Majority of the data is in the 10-35 age group
 ```{r}
@@ -89,7 +76,12 @@ boxplot(maternal_data$Age)
 ```
 #histo & boxplot SBP
 ```{r}
-hist(maternal_data$SystolicBP)
+hist(maternal_data$SystolicBP,
+      col = "lightblue",  # Fill color of bars
+     border = "black",   # Border color of bars
+     main = "Histogram of Systolic BP",
+     xlab = "Systolic",
+     ylab = "Frequency")
 ```
 ```{r}
 boxplot(maternal_data$SystolicBP)
@@ -99,7 +91,12 @@ fivenum(maternal_data$SystolicBP)
 ```
 #histo & boxplot DBP
 ```{r}
-hist(maternal_data$DiastolicBP)
+hist(maternal_data$DiastolicBP, 
+      col = "lightblue",  # Fill color of bars
+     border = "black",   # Border color of bars
+     main = "Diastolic BP Distribution",
+     xlab = "Diastolic BP",
+     ylab = "Frequency")
 ```
 ```{r}
 boxplot(maternal_data$DiastolicBP)
@@ -109,7 +106,12 @@ fivenum(maternal_data$DiastolicBP)
 ```
 # histo & boxplot BS
 ```{r}
-hist(maternal_data$BS)
+hist(maternal_data$BS,
+      col = "lightblue",  # Fill color of bars
+     border = "black",   # Border color of bars
+     main = "Blood Sugar Distribution",
+     xlab = "Blood sugar",
+     ylab = "Frequency")
 ```
 ```{r}
 boxplot(maternal_data$BS)
@@ -119,7 +121,12 @@ fivenum(maternal_data$BS)
 ```
 #histo & boxplot body temp
 ```{r}
-hist(maternal_data$BodyTemp)
+hist(maternal_data$BodyTemp,
+      col = "lightblue",  # Fill color of bars
+     border = "black",   # Border color of bars
+     main = "Body Temp Distribution",
+     xlab = "Body Temp",
+     ylab = "Frequency")
 ```
 ```{r}
 boxplot(maternal_data$BodyTemp)
@@ -130,20 +137,17 @@ fivenum(maternal_data$BodyTemp)
 
 #histo & boxplot HR
 ```{r}
-hist(maternal_data$HeartRate)
+hist(maternal_data$HeartRate,
+      col = "lightblue",  # Fill color of bars
+     border = "black",   # Border color of bars
+     main = "Heart Rate Distribution",
+     xlab = "Heart Rate",
+     ylab = "Frequency")
 ```
 ```{r}
 boxplot(maternal_data$HeartRate)
 ```
-```{r}
-summary_risk <- maternal_data  %>% group_by(RiskLevel) %>% summarise(fivenum(summary_risk)) %>% print(summary_risk)
-```
-```{r}
-summarise(maternal_data, RiskLevel, HeartRate)
-```
-```{r}
-group_by(RiskLevel) %>% summarise(5num = fivenum(HeartRate))
-```
+
 #correct grouping of 5nums acc to risk level
 #HR
 ```{r}
@@ -173,6 +177,7 @@ tapply(maternal_data$BS, maternal_data$RiskLevel, summary)
 #Age vs HR scatterplot
 ```{r, eval=FALSE}
 with(maternal_data, plot(HeartRate, Age))
+
 ```
 #SBP vs HR scatterplot
 ```{r, eval=FALSE}
@@ -186,6 +191,44 @@ with(maternal_data, plot( DiastolicBP, HeartRate))
 ```{r}
 with(maternal_data, plot(BodyTemp, HeartRate))
 ```
+```{r}
+# Reshape the data to long format
+data_long <- maternal_data %>%
+  select(Age, SystolicBP, DiastolicBP, BS, BodyTemp, HeartRate, RiskLevel) %>%
+  pivot_longer(cols = c(Age, SystolicBP, DiastolicBP, BS, BodyTemp, HeartRate),
+               names_to = "Measurement", values_to = "Value")
+
+# Corrected histogram plot (x-axis should be continuous)
+ggplot(data_long, aes(x = Value, fill = RiskLevel)) +
+  geom_histogram(binwidth = 5, alpha = 0.6, position = "identity") +
+  facet_wrap(~ Measurement, scales = "free_x") +
+  labs(title = "Histograms of Measurements", 
+       x = "Value", y = "Count") +
+  theme_minimal()
+  
+
+```
+```{r}
+
+library(corrplot)
+
+# Compute correlation matrix
+cor_matrix <- cor(maternal_data[, c("Age", "DiastolicBP", "SystolicBP")])
+
+# Plot the correlation matrix
+corrplot(cor_matrix, method = "color", type = "upper", tl.cex = 0.8)
+
+
+```
+```{r}
+vars_to_plot <- c("Age", "SystolicBP", "DiastolicBP", "BodyTemp") 
+
+for (var in vars_to_plot) {ggplot(maternal_data, aes(x = .data[[var]], y = HeartRate)) + geom_point(alpha = 0.6, color = "red") + geom_smooth(method = "lm", se = FALSE, color = "blue") +labs(title = paste("Heart Rate vs", var), x = var, y = "Heart Rate") + theme_minimal() -> p 
+  print(p)}
+
+```
+
+
 #Linear model HR vs BT
 ```{r}
 lm_BT = lm(formula = HeartRate ~ BodyTemp, data = maternal_data)
