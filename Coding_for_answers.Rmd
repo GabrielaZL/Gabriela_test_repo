@@ -1,0 +1,247 @@
+---
+title: "Project_mini_GZL"
+author: "Gabriela Cromhout"
+date: "2025-02-13"
+output: powerpoint_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## R Markdown
+
+This is an R Markdown presentation. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document.
+
+## Slide with Bullets
+
+- Bullet 1
+- Bullet 2
+- Bullet 3
+
+## Slide with R Output
+
+```{r cars, echo = TRUE}
+summary(cars)
+```
+
+## Slide with Plot
+
+```{r pressure}
+plot(pressure)
+```
+
+```{r, eval=FALSE}
+getwd()
+```
+
+```{r}
+library(tidyverse)
+library(dplyr)
+library(dslabs)
+maternal_data <- read.table(file = 'Maternal Health Risk Data Set.csv', header = TRUE, sep = ",",
+                        stringsAsFactors = TRUE)
+```
+```{r}
+head(maternal_data)
+```
+#Q1ii
+```{r}
+table_dias <- select(maternal_data, RiskLevel, DiastolicBP)
+```
+```{r}
+dias_table <- select(maternal_data, RiskLevel, DiastolicBP)
+```
+```{r}
+dias_table
+```
+```{r}
+dias_table %>% group_by(RiskLevel) %>%summarise(avg=median(DiastolicBP)) %>% arrange(avg)
+```
+#Q2 New variable - systolic rate
+```{r}
+maternal_data_1 <- mutate(maternal_data, systolic_rate = SystolicBP/Age)
+```
+```{r}
+maternal_data_1
+```
+#Q3 - filter for <40
+```{r}
+filter(maternal_data_1, Age<=40)
+```
+#filter then SBP by risk level
+
+```{r}
+filter(maternal_data_1, Age<=40) %>% group_by(RiskLevel) %>% summarise(avg=mean(SystolicBP)) %>% arrange(avg)
+```
+```{r}
+head(maternal_data)
+```
+#Q4 - histo & boxplot Age
+```{r}
+hist(maternal_data$Age)
+```
+#Majority of the data is in the 10-35 age group
+```{r}
+boxplot(maternal_data$Age)
+```
+#histo & boxplot SBP
+```{r}
+hist(maternal_data$SystolicBP)
+```
+```{r}
+boxplot(maternal_data$SystolicBP)
+```
+```{r}
+fivenum(maternal_data$SystolicBP)
+```
+#histo & boxplot DBP
+```{r}
+hist(maternal_data$DiastolicBP)
+```
+```{r}
+boxplot(maternal_data$DiastolicBP)
+```
+```{r}
+fivenum(maternal_data$DiastolicBP)
+```
+# histo & boxplot BS
+```{r}
+hist(maternal_data$BS)
+```
+```{r}
+boxplot(maternal_data$BS)
+```
+```{r}
+fivenum(maternal_data$BS)
+```
+#histo & boxplot body temp
+```{r}
+hist(maternal_data$BodyTemp)
+```
+```{r}
+boxplot(maternal_data$BodyTemp)
+```
+```{r}
+fivenum(maternal_data$BodyTemp)
+```
+
+#histo & boxplot HR
+```{r}
+hist(maternal_data$HeartRate)
+```
+```{r}
+boxplot(maternal_data$HeartRate)
+```
+```{r}
+summary_risk <- maternal_data  %>% group_by(RiskLevel) %>% summarise(fivenum(summary_risk)) %>% print(summary_risk)
+```
+```{r}
+summarise(maternal_data, RiskLevel, HeartRate)
+```
+```{r}
+group_by(RiskLevel) %>% summarise(5num = fivenum(HeartRate))
+```
+#correct grouping of 5nums acc to risk level
+#HR
+```{r}
+tapply(maternal_data$HeartRate, maternal_data$RiskLevel, summary)
+```
+#Age
+
+```{r}
+tapply(maternal_data$Age, maternal_data$RiskLevel, summary)
+```
+#SBP
+```{r}
+tapply(maternal_data$SystolicBP, maternal_data$RiskLevel, summary)
+```
+#DBP
+```{r}
+tapply(maternal_data$DiastolicBP, maternal_data$RiskLevel, summary)
+```
+#BodyTemp
+```{r}
+tapply(maternal_data$BodyTemp, maternal_data$RiskLevel, summary)
+```
+#BS
+```{r}
+tapply(maternal_data$BS, maternal_data$RiskLevel, summary)
+```
+#Age vs HR scatterplot
+```{r, eval=FALSE}
+with(maternal_data, plot(HeartRate, Age))
+```
+#SBP vs HR scatterplot
+```{r, eval=FALSE}
+with(maternal_data, plot( SystolicBP, HeartRate))
+```
+#DBP vs HR
+```{r}
+with(maternal_data, plot( DiastolicBP, HeartRate))
+```
+#Body temp vs HR
+```{r}
+with(maternal_data, plot(BodyTemp, HeartRate))
+```
+#Linear model HR vs BT
+```{r}
+lm_BT = lm(formula = HeartRate ~ BodyTemp, data = maternal_data)
+summary(lm_BT)
+```
+#Linear model HR vs DBP
+```{r}
+lm_DBP = lm(formula = HeartRate ~ DiastolicBP, data = maternal_data)
+summary(lm_DBP)
+```
+#Linear model HR vs SBP
+```{r}
+lm_SBP = lm(formula = HeartRate ~ SystolicBP, data = maternal_data)
+summary(lm_SBP)
+```
+#Linear model HR vs Age
+```{r}
+lm_age = lm(formula = HeartRate ~ Age, data = maternal_data)
+summary(lm_age)
+```
+#Linear model BS vs HR
+```{r}
+lm_BS = lm(formula = HeartRate ~ BS, data = maternal_data)
+summary(lm_BS)
+```
+#Multiple lm  HR
+```{r}
+multi_lm = lm(formula = HeartRate ~ .,
+               data = maternal_data)
+summary(multi_lm)
+
+```
+#reworked
+```{r}
+multi_lm_1 = lm(formula = HeartRate ~ DiastolicBP + Age + BodyTemp + SystolicBP,
+               data = maternal_data)
+summary(multi_lm_1)
+
+```
+#step-wise - both directions
+```{r}
+intercept_only <- lm(HeartRate ~ 1, data=maternal_data) 
+```
+
+```{r}
+all <- lm(HeartRate ~ SystolicBP + DiastolicBP + BodyTemp + Age, data=maternal_data)
+```
+
+```{r}
+both <- step(intercept_only, direction = 'both', scope = formula(all), trace=0)
+```
+
+```{r}
+both$anova
+```
+#both coefficient - explains relationship
+```{r} 
+both$coefficients
+```
